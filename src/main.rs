@@ -16,7 +16,6 @@ use serde::{Deserialize, Serialize};
 use chrono_tz::{Tz, TZ_VARIANTS};
 use chrono::Utc;
 
-
 struct Handler;
 
 async fn get_conf() -> Value {
@@ -71,38 +70,25 @@ lazy_static! {
                     Ok(r) => {r},
                     Err(_) => {
                         println!("Failed to read from zones.json");
-                        // write_tzs();
                         Mapping {data : Vec::new()}
                     }
                 };
             },
             Err(_) => {
-                // write_tzs();
                 zones = Mapping {data : Vec::new()};
-                // write_tzs();
-                // panic!("Could not open zones.json: {}", e)
             }
         }
-
-        // let d: Mapping = 
-
 
         for (guild, vec) in zones.data.iter() {
             mutx.lock().unwrap().insert(*guild, vec.to_vec());
         }
-        
-        // m.insert(GuildId(952651810546540606), vec![("the Americans".to_string(), "US/Eastern".to_string())]);
-        // m.insert(GuildId(952651810546540606), vec![("joey".to_string(), "Europe/London".to_string())]);
 
-        // Australian Eastern Standard Time (AEST)
         mutx
     };
 }
 
 fn write_tzs() {
     let mut data: Vec<(GuildId, Vec<(String, String)>)> = Vec::new();
-    // TEST.lock().unwrap().
-    // let m: BTreeMap<GuildId, Vec<(String, String)>> = TEST.lock().unwrap();
     for (key, val) in TEST.lock().unwrap().iter() {
         data.push((*key, val.to_vec()))
     }
@@ -132,23 +118,9 @@ fn get_time_str(guild_id: GuildId) -> String {
         }
     }
 
-    // let usa_tz = "US/Eastern".parse::<Tz>().unwrap();
-    // let usa_time = now.with_timezone(&usa_tz);
-    // output += &format!("For the Americans it is currently {}", usa_time.format("%H:%M"));
-
-    // let uk_time: chrono::DateTime<_> = now.with_timezone(&"Europe/London".parse::<Tz>().unwrap());
-    // output += &format!("\nFor joey in the UK it is {}", uk_time.time().format("%H:%M"));
-    // if usa_time.format("%d/%m/%y").to_string() != uk_time.format("%d/%m/%y").to_string() {
-    //     output += " the next day"
-    // }
-
     output += "\nI'm a bot, message joey if something went wrong or needs changing";
-    // let aus_time = ""
     return output;
-    // return format!("For the Americans it is currently {}\nFor joey in the UK it is {}", usa_time.format("%H:%M"), uk_time.time().format("%H:%M"))
-    // return format!("test at guild {}", guild_id)
 }
-
 
 #[async_trait]
 impl EventHandler for Handler {
@@ -204,17 +176,12 @@ impl EventHandler for Handler {
 
 #[tokio::main]
 async fn main() {
-    // for tz in chrono_tz::TZ_VARIANTS {
-    //     println!("{}", tz);
-    // }
-
     let conf = get_conf();
     let token = String::get_config(&"APIKey", conf.await);
     
     let intents = GatewayIntents::GUILD_MESSAGES
         | GatewayIntents::DIRECT_MESSAGES
         | GatewayIntents::MESSAGE_CONTENT;
-
 
     let mut client =
         Client::builder(&token, intents).event_handler(Handler).await.expect("Err creating client");
