@@ -67,6 +67,7 @@ fn get_time_str(_guild_id: GuildId) -> String {
         output += " the next day"
     }
 
+    output += "\nI'm a bot, message joey if something went wrong or needs changing";
     // let aus_time = ""
     return output;
     // return format!("For the Americans it is currently {}\nFor joey in the UK it is {}", usa_time.format("%H:%M"), uk_time.time().format("%H:%M"))
